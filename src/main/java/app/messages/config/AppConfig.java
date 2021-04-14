@@ -1,9 +1,10 @@
-package app.messages;
+package app.messages.config;
 
 import java.util.Arrays;
 
 import javax.sql.DataSource;
 
+import app.messages.web.AuditingFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -30,6 +31,13 @@ public class AppConfig {
 		sessionFactoryBean.setPackagesToScan("app.messages");
 		return sessionFactoryBean;
 	}
+
+	@Bean
+	public HibernateTransactionManager transactionManager() {
+		HibernateTransactionManager transactionManager = new HibernateTransactionManager();
+		transactionManager.setSessionFactory(sessionFactory().getObject());
+		return transactionManager;
+	}
 	
 	@Bean
 	public FilterRegistrationBean<AuditingFilter> auditingFilterRegistrationBean() {
@@ -40,13 +48,6 @@ public class AppConfig {
 		// registration.setUrlPatterns(Arrays.asList("/messages/*"));
 		registration.setUrlPatterns(Arrays.asList("/*"));
 		return registration;
-	}
-	
-	@Bean
-	public HibernateTransactionManager transactionManager() {
-		HibernateTransactionManager transactionManager = new HibernateTransactionManager();
-		transactionManager.setSessionFactory(sessionFactory().getObject());
-		return transactionManager;
 	}
 	
 	/* @Bean
